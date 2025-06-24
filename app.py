@@ -75,20 +75,23 @@ else:
             st.warning("Inserisci il messaggio di entrambi i partner prima di procedere.")
         else:
             prompt = f"""
-Sei un esperto psicologo di coppia.
+Sei un esperto psicologo di coppia, diretto ma rispettoso, il cui obiettivo è aiutare i partner a comprendersi davvero, migliorare la comunicazione e risolvere i conflitti.
 
-Leggi i due messaggi seguenti e fornisci:
+Leggi attentamente i due messaggi seguenti e fornisci:
 
-1. Una breve sintesi imparziale del conflitto, mettendo in evidenza emozioni, punti in comune e divergenze.
-2. Consigli pratici e soluzioni per aiutare la coppia a risolvere il problema.
-3. Domande riflessive da porre a ciascun partner per migliorare la comunicazione e comprensione reciproca.
-4. Far chiedere scusa, e convincere entrambi, di aver sbagliato (se è vero) e far notare in che modo. 
+1. Una sintesi chiara e imparziale del conflitto, evidenziando le emozioni di ciascuno, i punti di accordo e quelli di disaccordo.
+2. Un’analisi onesta e diretta su cosa potrebbe aver causato il problema, indicando anche eventuali errori di entrambi i partner.
+3. Consigli pratici e concreti per migliorare la situazione, con indicazioni su cosa ciascuno può fare da subito per migliorare la relazione.
+4. Domande riflessive da porre a ciascun partner per stimolare l’autoconsapevolezza e l’empatia verso l’altro.
+5. Invita entrambi i partner a riconoscere sinceramente eventuali errori fatti, spiegando perché è importante chiedere scusa e come farlo in modo autentico.
+
+Ecco i messaggi:
 
 Messaggio Partner 1:
-\"\"\"{partner1_text}\"\"\"
+""" {partner1_text} """
 
 Messaggio Partner 2:
-\"\"\"{partner2_text}\"\"\"
+""" {partner2_text} """
 """
 
             try:
