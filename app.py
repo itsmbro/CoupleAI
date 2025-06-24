@@ -88,10 +88,10 @@ Leggi attentamente i due messaggi seguenti e fornisci:
 Ecco i messaggi:
 
 Messaggio Partner 1:
-""" {partner1_text} """
+\"\"\"{partner1_text}\"\"\"
 
 Messaggio Partner 2:
-""" {partner2_text} """
+\"\"\"{partner2_text}\"\"\"
 """
 
             try:
