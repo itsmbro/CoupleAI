@@ -1,68 +1,81 @@
 import streamlit as st
-import openai
+from openai import OpenAI
 
-# --- Impostazioni pagina e grafica ---
-st.set_page_config(
-    page_title="Psychologist Couple AI",
-    page_icon="❤️‍🩹",
-    layout="centered",
-    initial_sidebar_state="auto",
-)
+st.set_page_config(page_title="Psicologo di Coppia AI", layout="centered")
 
-# CSS custom per grafica colorata e moderna
-st.markdown("""
-<style>
-    .big-font {
-        font-size:28px !important;
-        font-weight: 700;
-        color: #d6336c;
-        margin-bottom: 0.3em;
+# CSS semplice per un look moderno e colorato
+st.markdown(
+    """
+    <style>
+    body {
+        background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
     }
-    .partner-box {
-        background: linear-gradient(135deg, #ffe3ec 0%, #ffd6e8 100%);
-        border-radius: 15px;
-        padding: 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 8px 15px rgba(214, 51, 108, 0.3);
+    .title {
+        text-align: center;
+        color: #2c3e50;
+        font-weight: 700;
+        margin-bottom: 0.2em;
+    }
+    .subtitle {
+        text-align: center;
+        color: #34495e;
+        margin-top: 0;
+        margin-bottom: 2em;
+        font-size: 1.2em;
+    }
+    textarea {
+        border-radius: 8px;
+        border: 2px solid #2980b9;
+        padding: 10px;
+        font-size: 1em;
+        width: 100%;
+        min-height: 120px;
+        resize: vertical;
     }
     .response-box {
-        background: #f9f9f9;
-        border-left: 6px solid #d6336c;
-        padding: 20px;
+        background: #ecf0f1;
         border-radius: 10px;
+        padding: 15px;
         margin-top: 20px;
-        font-size: 18px;
-        line-height: 1.5;
+        font-size: 1em;
+        line-height: 1.4;
+        color: #2c3e50;
+        white-space: pre-wrap;
     }
-    .footer {
-        font-size: 12px;
-        color: gray;
-        margin-top: 40px;
-        text-align: center;
+    button {
+        background-color: #2980b9;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-size: 1.1em;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
     }
-</style>
-""", unsafe_allow_html=True)
+    button:hover {
+        background-color: #1c5980;
+    }
+    </style>
+    """, unsafe_allow_html=True
+)
 
-st.title("❤️‍🩹 Psicologo di Coppia AI")
+st.title("🧠 Psicologo di Coppia AI")
+st.markdown("Inserisci i messaggi di entrambi i partner per analizzare il conflitto e trovare una soluzione.")
 
-st.markdown("### Inserisci i pensieri di entrambi e lascia che l'AI aiuti a trovare una soluzione.")
+partner1_text = st.text_area("Messaggio Partner 1 (es. tu):")
+partner2_text = st.text_area("Messaggio Partner 2 (es. lei/lui):")
 
-# Input messaggi separati
-with st.container():
-    st.markdown('<div class="partner-box"><h3>Partner 1 (Tu)</h3></div>', unsafe_allow_html=True)
-    partner1_text = st.text_area("Scrivi qui cosa senti, pensi o vuoi esprimere", key="p1", height=150)
-
-with st.container():
-    st.markdown('<div class="partner-box"><h3>Partner 2 (Lei/Lui)</h3></div>', unsafe_allow_html=True)
-    partner2_text = st.text_area("Scrivi qui cosa pensa o prova l'altro partner", key="p2", height=150)
-
-if st.button("🧠 Analizza e Risolvi"):
-    if not partner1_text.strip() or not partner2_text.strip():
-        st.warning("Per favore, inserisci il messaggio di entrambi i partner.")
-    else:
-        # Preparazione prompt per OpenAI
-        prompt = f"""
-Sei un esperto psicologo di coppia. partiamo dal presupposto che il tuo obiettivo è far tornare amore e pace, ed eliminare il problema. 
+if "OPENAI_API_KEY" not in st.secrets:
+    st.error("❗ Per favore, inserisci la tua API Key di OpenAI in `st.secrets` come 'OPENAI_API_KEY'")
+else:
+    if st.button("Analizza e Risolvi 🕊️"):
+        if not partner1_text.strip() or not partner2_text.strip():
+            st.warning("Inserisci il messaggio di entrambi i partner prima di procedere.")
+        else:
+            prompt = f"""
+Sei un esperto psicologo di coppia.
 
 Leggi i due messaggi seguenti e fornisci:
 
@@ -78,19 +91,17 @@ Messaggio Partner 2:
 \"\"\"{partner2_text}\"\"\"
 """
 
-        # OpenAI API call (devi inserire la tua API key)
-        openai.api_key = st.secrets.get("OPENAI_API_KEY")  # o metti openai.api_key = "la_tua_chiave"
-        try:
-            with st.spinner("L'AI sta elaborando..."):
-                response = openai.ChatCompletion.create(
-                    model="gpt-4o-mini",
-                    messages=[{"role": "user", "content": prompt}],
-                    max_tokens=500,
-                    temperature=0.7,
-                )
-            answer = response['choices'][0]['message']['content']
-            st.markdown(f'<div class="response-box">{answer.replace("\\n","<br>")}</div>', unsafe_allow_html=True)
-        except Exception as e:
-            st.error(f"Errore durante la chiamata all'API OpenAI: {e}")
+            try:
+                client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+                with st.spinner("L'AI sta elaborando la risposta..."):
+                    response = client.chat.completions.create(
+                        model="gpt-4o-mini",
+                        messages=[{"role": "user", "content": prompt}],
+                        max_tokens=500,
+                        temperature=0.7,
+                    )
+                answer = response.choices[0].message.content
+                st.markdown(f'<div class="response-box">{answer}</div>', unsafe_allow_html=True)
+            except Exception as e:
+                st.error(f"Errore durante la chiamata all'API OpenAI: {e}")
 
-st.markdown('<div class="footer">Powered by OpenAI GPT-4o-mini & Streamlit</div>', unsafe_allow_html=True)
